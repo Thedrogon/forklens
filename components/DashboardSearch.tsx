@@ -3,14 +3,19 @@ import { useState } from 'react';
 import { Search, Loader2, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export default function DashboardSearch({ usageCount }: { usageCount: number }) {
+// FIX 1: Add default value and type optional
+export default function DashboardSearch({ usageCount = 0 }: { usageCount?: number }) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   
-  const limit: number = Number(process.env.API_SEARCH_LIMIT);
-  const isLocked = usageCount >= limit;
-  const progress = (usageCount / limit) * 100;
+  // FIX 2: Sanitize the input to ensure it's always a number
+  // If usageCount is null/undefined/NaN, it becomes 0
+  const safeUsageCount = Number.isNaN(Number(usageCount)) ? 0 : Number(usageCount);
+
+  const limit = 50;
+  const isLocked = safeUsageCount >= limit;
+  const progress = (safeUsageCount / limit) * 100;
 
   const handleSearch = () => {
     if (isLocked) return;
@@ -29,11 +34,13 @@ export default function DashboardSearch({ usageCount }: { usageCount: number }) 
           <p className="text-gray-600 font-bold text-sm">Generate a fresh graph immediately.</p>
         </div>
         
-        {/* Brutalist Progress Bar */}
         <div className="w-full md:w-64">
           <div className="flex justify-between text-xs font-black uppercase tracking-wider mb-1">
             <span>Daily Quota</span>
-            <span className={isLocked ? "text-red-600" : "text-purple-600"}>{usageCount}/{limit}</span>
+            {/* FIX 3: Use safeUsageCount here */}
+            <span className={isLocked ? "text-red-600" : "text-purple-600"}>
+              {safeUsageCount}/{limit}
+            </span>
           </div>
           <div className="w-full h-4 bg-gray-200 border-2 border-black rounded-full overflow-hidden">
             <div 
@@ -44,7 +51,8 @@ export default function DashboardSearch({ usageCount }: { usageCount: number }) 
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* ... Rest of the component (Search Input & Button) stays the same ... */}
+       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={20} />
           <input
