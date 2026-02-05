@@ -2,11 +2,16 @@
 import Link from 'next/link';
 import { GitFork, Github, LogIn, Star } from 'lucide-react';
 import { useSession, signIn, signOut } from 'next-auth/react';
+import LoginModal from './LoginModal';
+import { useState } from 'react';
 
 export default function Navbar() {
   const { data: session } = useSession();
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   return (
+    <>
+
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#FDF4FF]/90 backdrop-blur-md border-b-2 border-black h-20 flex items-center justify-center px-6 lg:px-15">
 
       <div className='max-w-6xl w-full flex items-center justify-between h-full'>
@@ -22,7 +27,7 @@ export default function Navbar() {
       </Link>
 
       {/* Center Links (Optional) */}
-      <div className="hidden md:flex gap-6 font-bold text-sm">
+      <div className="hidden md:flex gap-6 font-bold text-[16px]">
         <Link href="#features" className="hover:text-purple-600 hover:underline decoration-2">Features</Link>
         <Link href="#pricing" className="hover:text-purple-600 hover:underline decoration-2">Pricing</Link>
       </div>
@@ -59,7 +64,7 @@ export default function Navbar() {
            </div>
         ) : (
           <button 
-            onClick={() => signIn('github')}
+            onClick={() => setIsLoginOpen(true)}
             className="flex items-center gap-2 bg-[#C084FC] px-4 py-2 rounded-lg border-2 border-black font-bold text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-px hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
           >
             <LogIn className="w-4 h-4" />
@@ -69,5 +74,11 @@ export default function Navbar() {
       </div>
       </div>
     </nav>
+        {/* Render the Modal outside the nav structure */}
+      <LoginModal 
+        isOpen={isLoginOpen} 
+        onClose={() => setIsLoginOpen(false)} 
+      />
+    </>
   );
 }

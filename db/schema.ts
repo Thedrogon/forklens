@@ -1,5 +1,5 @@
 // db/schema.ts
-import { pgTable, text, timestamp, integer, uuid, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, integer, uuid, boolean, jsonb } from 'drizzle-orm/pg-core';
 
 // --- Auth Tables (Standard NextAuth) ---
 export const users = pgTable("user", {
@@ -8,9 +8,9 @@ export const users = pgTable("user", {
   email: text("email").notNull(),
   image: text("image"),
   createdAt: timestamp("created_at").defaultNow(),
-  // Tracking Usage
+  // Limits
   dailySearches: integer("daily_searches").default(0),
-  lastSearchDate: timestamp("last_search_date").defaultNow(),
+  lastSearchReset: timestamp("last_search_reset").defaultNow(), // To reset at 12 AM
 });
 
 export const accounts = pgTable("account", {
@@ -30,9 +30,12 @@ export const accounts = pgTable("account", {
 // --- Your App Tables ---
 export const savedGraphs = pgTable("saved_graphs", {
   id: uuid("id").defaultRandom().primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   repoOwner: text("repo_owner").notNull(),
   repoName: text("repo_name").notNull(),
   forkCount: integer("fork_count").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
+  activeCount: integer("active_count").default(0),
+  // Caching
+  data: jsonb("graph_data"), // We store the whole graph JSON here!
+  updatedAt: timestamp("updated_at").defaultNow(), // The "2 Hour" timer
 });
