@@ -11,78 +11,85 @@ import Link from "next/link";
 import { getForkData, saveGraph } from "@/app/action";
 
 // ... processGraph helper function remains exactly the same ...
-const processGraph = (
-  data: any,
-  rootName: string,
-  currentMode: "graph" | "timeline",
-) => {
+// Inside app/diagram/[owner]/[repo]/page.tsx
+
+// Inside app/diagram/[owner]/[repo]/page.tsx
+
+// Inside app/diagram/[owner]/[repo]/page.tsx
+
+const processGraph = (data: any, rootName: string, currentMode: 'graph' | 'timeline') => {
   if (!data || !data.forks) return { nodes: [], edges: [] };
 
   const mainNode: Node = {
-    id: "root",
-    type: "input",
+    id: 'root',
+    type: 'input', 
     data: { label: rootName },
     position: { x: 0, y: 0 },
-    style: {
-      background: "#111",
-      color: "#fff",
-      border: "2px solid #000",
-      fontWeight: "bold",
-      width: 200,
-      padding: 12,
-      borderRadius: 12,
-      textAlign: "center",
-      fontSize: "16px",
-    },
+    style: { 
+      background: '#111', 
+      color: '#fff', 
+      border: '3px solid #000',
+      fontWeight: '900', 
+      // FIX 1: Auto width to fit long names
+      width: 'auto',
+      minWidth: 250, 
+      padding: '15px 30px', // More padding
+      borderRadius: 50, 
+      textAlign: 'center', 
+      fontSize: '18px', 
+      boxShadow: '8px 8px 0px 0px rgba(0,0,0,0.2)',
+      zIndex: 50
+    }
   };
 
   let newNodes: Node[] = [mainNode];
   let newEdges: Edge[] = [];
 
-  data.forks.nodes.forEach((fork: any, index: number) => {
-    const daysAgo = Math.floor(
-      (new Date().getTime() - new Date(fork.pushedAt).getTime()) /
-        (1000 * 3600 * 24),
-    );
-    const isActive = daysAgo < 30;
-    let x = 0,
-      y = 0;
+  const forks = data.forks.nodes;
+  const GOLDEN_ANGLE = 137.5 * (Math.PI / 180); 
+  
+  // FIX 2: Reduced from 280 to 180 (Much tighter packing)
+  const SPREAD_FACTOR = 190; 
 
-    if (currentMode === "timeline") {
-      x = 600 - daysAgo * 3;
-      y = (index % 2 === 0 ? -1 : 1) * (Math.random() * 400);
-      mainNode.position = { x: 700, y: 0 };
+  forks.forEach((fork: any, index: number) => {
+    const daysAgo = Math.floor((new Date().getTime() - new Date(fork.pushedAt).getTime()) / (1000 * 3600 * 24));
+    const isActive = daysAgo < 30; 
+    let x = 0, y = 0;
+
+    if (currentMode === 'timeline') {
+      x = 800 - (daysAgo * 5); 
+      y = (index % 2 === 0 ? -1 : 1) * (Math.random() * 600); 
+      mainNode.position = { x: 900, y: 0 };
     } else {
-      const angle = (index / (data.forks.nodes.length + 1)) * 2 * Math.PI;
-      const radius = 450 + index * 15;
-      x = Math.cos(angle) * radius;
-      y = Math.sin(angle) * radius;
-      mainNode.position = { x: 0, y: 0 };
+      // Golden Angle Spiral
+      const r = SPREAD_FACTOR * Math.sqrt(index + 1);
+      const theta = index * GOLDEN_ANGLE;
+      
+      x = r * Math.cos(theta);
+      y = r * Math.sin(theta);
     }
 
     newNodes.push({
       id: fork.nameWithOwner,
-      type: "forkNode",
-      data: {
-        label: fork.nameWithOwner,
-        avatar: fork.owner.avatarUrl,
-        stars: fork.stargazerCount,
-        daysAgo: daysAgo,
-        url: fork.url,
+      type: 'forkNode',
+      data: { 
+        label: fork.nameWithOwner, avatar: fork.owner.avatarUrl,
+        stars: fork.stargazerCount, daysAgo: daysAgo, url: fork.url
       },
       position: { x, y },
       draggable: true,
+      style: { zIndex: 20 } 
     });
 
     newEdges.push({
       id: `e-root-${fork.nameWithOwner}`,
-      source: "root",
+      source: 'root',
       target: fork.nameWithOwner,
       animated: isActive,
-      style: {
-        stroke: isActive ? "#84cc16" : "#cbd5e1",
-        strokeWidth: isActive ? 2 : 1,
-      },
+      style: { 
+        stroke: isActive ? '#C084FC' : '#cbd5e1', 
+        strokeWidth: isActive ? 3 : 1.5,
+      }
     });
   });
 
