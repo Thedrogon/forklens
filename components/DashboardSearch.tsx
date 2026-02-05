@@ -17,53 +17,56 @@ export default function DashboardSearch({ usageCount }: { usageCount: number }) 
     if (!input.includes('/')) return alert("Use owner/repo format");
     
     setLoading(true);
-    // Redirect to the permalink page which handles the fetching & saving logic
     router.push(`/diagram/${input}`);
   };
 
   return (
-    <div className="w-full bg-white rounded-2xl border border-gray-200 shadow-lg p-6 relative overflow-hidden group">
-      {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50" />
-
-      <h2 className="text-2xl font-black mb-1">Quick Analyze</h2>
-      <p className="text-gray-500 text-sm mb-6">Enter a GitHub repository to generate a fresh graph.</p>
-
-      {/* Usage Bar */}
-      <div className="flex justify-between text-xs font-bold text-gray-400 mb-1">
-        <span>Daily Quota</span>
-        <span className={isLocked ? "text-red-500" : "text-purple-600"}>{usageCount}/{limit}</span>
+    <div className="w-full bg-white rounded-xl border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 relative overflow-hidden">
+      
+      <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
+        <div>
+          <h2 className="text-3xl font-black tracking-tight text-black uppercase">Quick Analyze</h2>
+          <p className="text-gray-600 font-bold text-sm">Generate a fresh graph immediately.</p>
+        </div>
+        
+        {/* Brutalist Progress Bar */}
+        <div className="w-full md:w-64">
+          <div className="flex justify-between text-xs font-black uppercase tracking-wider mb-1">
+            <span>Daily Quota</span>
+            <span className={isLocked ? "text-red-600" : "text-purple-600"}>{usageCount}/{limit}</span>
+          </div>
+          <div className="w-full h-4 bg-gray-200 border-2 border-black rounded-full overflow-hidden">
+            <div 
+              className={`h-full border-r-2 border-black transition-all duration-500 ${isLocked ? 'bg-red-500' : 'bg-purple-500'}`} 
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
       </div>
-      <div className="w-full h-2 bg-gray-100 rounded-full mb-6 overflow-hidden">
-        <div 
-          className={`h-full rounded-full transition-all duration-500 ${isLocked ? 'bg-red-500' : 'bg-purple-600'}`} 
-          style={{ width: `${progress}%` }}
-        />
-      </div>
 
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={20} />
           <input
             type="text"
             disabled={isLocked || loading}
-            placeholder={isLocked ? "Daily limit reached" : "owner/repo"}
+            placeholder={isLocked ? "DAILY LIMIT REACHED" : "facebook/react"}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-purple-600 focus:bg-white transition-all disabled:opacity-50"
+            className="w-full pl-12 pr-4 py-4 bg-white border-2 border-black rounded-lg outline-none font-bold text-lg placeholder:text-gray-400 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-0.5 transition-all disabled:opacity-50 disabled:bg-gray-100"
           />
         </div>
         <button
           onClick={handleSearch}
           disabled={isLocked || loading}
-          className={`px-6 py-3 rounded-xl font-bold text-white transition-all flex items-center gap-2 ${
+          className={`px-8 py-4 rounded-lg font-black text-white border-2 border-black transition-all flex items-center justify-center gap-2 ${
             isLocked 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-black hover:bg-gray-800 active:scale-95 shadow-lg hover:shadow-xl'
+              ? 'bg-gray-400 cursor-not-allowed shadow-none' 
+              : 'bg-[#C084FC] text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none'
           }`}
         >
-          {loading ? <Loader2 className="animate-spin" size={20} /> : (isLocked ? <Lock size={20}/> : "Diagram")}
+          {loading ? <Loader2 className="animate-spin" size={24} /> : (isLocked ? <Lock size={24}/> : "DIAGRAM")}
         </button>
       </div>
     </div>
