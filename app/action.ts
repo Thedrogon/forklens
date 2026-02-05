@@ -1,22 +1,22 @@
 'use server'
-import { unstable_cache } from "next/cache";
 import { Octokit } from "octokit";
 import { db } from "@/db"; 
 import { users, savedGraphs } from "@/db/schema";
 import { auth } from "@/auth"; 
 import { eq, and } from "drizzle-orm";
+import { revalidatePath, unstable_cache } from "next/cache";
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+const DAILY_LIMIT = 50; // <--- NEW LIMIT
 
-// --- 1. PRIVATE HELPER (Safe for Cache) ---
-// This function ONLY talks to GitHub. No Auth, No DB.
+// --- 1. PRIVATE HELPER ---
 async function fetchRawGithubData(owner: string, repo: string) {
   console.log(`🌍 Querying GitHub for ${owner}/${repo}...`);
   const query = `
     query ($owner: String!, $name: String!) {
       repository(owner: $owner, name: $name) {
         forkCount
-        forks(first: 20, orderBy: {field: STARGAZERS, direction: DESC}) {
+        forks(first: 50, orderBy: {field: STARGAZERS, direction: DESC}) {
           nodes {
             nameWithOwner
             stargazerCount
@@ -33,27 +33,55 @@ async function fetchRawGithubData(owner: string, repo: string) {
     return { success: true, data: data.repository };
   } catch (error) {
     console.error("GitHub Error:", error);
-    return { success: false, error: "Repo not found" };
+    return { success: false, error: "Repo not found", data: null };
   }
 }
 
-// --- 2. PUBLIC ACTION (For Users) ---
-// This handles Auth, Rate Limits, and DB Saving
+// --- 2. SMART SEARCH ACTION ---
 export async function getForkData(owner: string, repo: string) {
   const session = await auth();
   const userEmail = session?.user?.email;
-  let dbUser = null;
 
-  // A. RATE LIMIT CHECK
   if (userEmail) {
-    dbUser = await db.query.users.findFirst({
+    let dbUser = await db.query.users.findFirst({
       where: eq(users.email, userEmail),
     });
 
     if (dbUser) {
-      if ((dbUser.dailySearches || 0) >= 10) {
-        return { success: false, error: "Daily limit reached (10/10).", data:null};
+      // A. CHECK SAVED GRAPHS FIRST (Free Pass)
+      const savedGraph = await db.query.savedGraphs.findFirst({
+        where: and(
+          eq(savedGraphs.userId, dbUser.id),
+          eq(savedGraphs.repoOwner, owner),
+          eq(savedGraphs.repoName, repo)
+        )
+      });
+
+      if (savedGraph && savedGraph.data) {
+        console.log("⚡ Serving from DB Cache (No Quota Used)");
+        return { success: true, data: savedGraph.data };
       }
+
+      // B. LAZY RESET LOGIC (New Day Check)
+      const today = new Date().toDateString();
+      const lastReset = dbUser.lastSearchReset ? new Date(dbUser.lastSearchReset).toDateString() : "";
+
+      if (today !== lastReset) {
+        console.log("🔄 New day detected! Resetting limit...");
+        // Reset DB immediately
+        await db.update(users)
+          .set({ dailySearches: 0, lastSearchReset: new Date() })
+          .where(eq(users.id, dbUser.id));
+        
+        // Update local variable so the rest of the function knows we are fresh
+        dbUser.dailySearches = 0; 
+      }
+
+      // C. RATE LIMIT CHECK (Now 50)
+      if ((dbUser.dailySearches || 0) >= DAILY_LIMIT) {
+        return { success: false, error: `Daily limit reached (${DAILY_LIMIT}/${DAILY_LIMIT}).`, data: null };
+      }
+
       // Increment count
       await db.update(users)
         .set({ dailySearches: (dbUser.dailySearches || 0) + 1 })
@@ -61,67 +89,56 @@ export async function getForkData(owner: string, repo: string) {
     }
   }
 
-  // B. CACHE CHECK (DB)
-  let existingGraph = null;
-  if (dbUser) {
-    existingGraph = await db.query.savedGraphs.findFirst({
-      where: and(
-        eq(savedGraphs.userId, dbUser.id),
-        eq(savedGraphs.repoOwner, owner),
-        eq(savedGraphs.repoName, repo)
-      )
-    });
-
-    if (existingGraph && existingGraph.updatedAt) {
-      const hours = (new Date().getTime() - new Date(existingGraph.updatedAt).getTime()) / 3600000;
-      if (hours < 2 && existingGraph.data) {
-        console.log("⚡ DB CACHE HIT");
-        return { success: true, data: existingGraph.data };
-      }
-    }
-  }
-
-  // C. FETCH REAL DATA (Using the helper)
-  const result = await fetchRawGithubData(owner, repo);
-  
-  if (!result.success) return result;
-
-  // D. SAVE TO DB
-  if (dbUser && result.data) {
-    const activeCount = result.data.forks.nodes.filter((n: any) => {
-      const days = (new Date().getTime() - new Date(n.pushedAt).getTime()) / 86400000;
-      return days < 30;
-    }).length;
-
-    if (existingGraph) {
-      await db.update(savedGraphs).set({
-        data: result.data,
-        forkCount: result.data.forkCount,
-        activeCount: activeCount,
-        updatedAt: new Date(),
-      }).where(eq(savedGraphs.id, existingGraph.id));
-    } else {
-      await db.insert(savedGraphs).values({
-        userId: dbUser.id,
-        repoOwner: owner,
-        repoName: repo,
-        forkCount: result.data.forkCount,
-        activeCount: activeCount,
-        data: result.data,
-      });
-    }
-  }
-
-  return result;
+  // D. FETCH REAL DATA
+  return await fetchRawGithubData(owner, repo);
 }
 
-// --- 3. DEMO DATA (Cached Static Version) ---
-// This now calls the PRIVATE helper, avoiding auth() calls entirely.
+// --- 3. SAVE ACTION ---
+export async function saveGraph(owner: string, repo: string, data: any) {
+  const session = await auth();
+  if (!session?.user?.email) return { success: false, error: "Not logged in" };
+
+  const dbUser = await db.query.users.findFirst({
+    where: eq(users.email, session.user.email),
+  });
+
+  if (!dbUser) return { success: false, error: "User not found" };
+
+  const existingGraphs = await db.query.savedGraphs.findMany({
+    where: eq(savedGraphs.userId, dbUser.id)
+  });
+
+  if (existingGraphs.length >= 4) {
+    return { success: false, error: "Slot limit reached (4/4). Delete one to save this." };
+  }
+
+  const alreadySaved = existingGraphs.find(g => g.repoOwner === owner && g.repoName === repo);
+  if (alreadySaved) {
+     return { success: false, error: "Already saved!" };
+  }
+
+  const activeCount = data.forks.nodes.filter((n: any) => {
+    const days = (new Date().getTime() - new Date(n.pushedAt).getTime()) / 86400000;
+    return days < 30;
+  }).length;
+
+  await db.insert(savedGraphs).values({
+    userId: dbUser.id,
+    repoOwner: owner,
+    repoName: repo,
+    forkCount: data.forkCount,
+    activeCount: activeCount,
+    data: data, 
+  });
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}
+
+// --- 4. LANDING PAGE DEMO ---
 export const getDemoData = unstable_cache(
   async () => {
-    console.log("⚡ RE-FETCHING DEMO DATA");
-    // Call the safe helper, NOT the main action
-    return await fetchRawGithubData('shadcn-ui', 'ui');
+    return await fetchRawGithubData('facebook', 'react');
   },
   ['demo-data-v1'], 
   { revalidate: 864000 } 

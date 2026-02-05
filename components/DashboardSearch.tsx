@@ -8,7 +8,7 @@ export default function DashboardSearch({ usageCount }: { usageCount: number }) 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   
-  const limit = 10;
+  const limit: number = Number(process.env.API_SEARCH_LIMIT);
   const isLocked = usageCount >= limit;
   const progress = (usageCount / limit) * 100;
 

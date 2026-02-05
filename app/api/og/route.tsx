@@ -6,8 +6,8 @@ export const runtime = 'edge';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const repo = searchParams.get('repo') || 'unknown/repo';
-  const active = searchParams.get('active') || '?';
-  const total = searchParams.get('total') || '?';
+  const active = searchParams.get('active') || '-';
+  const total = searchParams.get('total') || '-';
  
   return new ImageResponse(
     (
@@ -19,13 +19,13 @@ export async function GET(request: Request) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#FDF4FF', // Your Purple Theme
+          backgroundColor: '#FDF4FF', 
           border: '20px solid black',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-           {/* Fork Icon (Simulated with text for simplicity in OG) */}
-           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+           {/* FIXED SVG PROPERTIES BELOW */}
+           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
              <path d="M12 18v-7" />
              <path d="M18 7v4a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7" />
              <circle cx="12" cy="18" r="3" />
