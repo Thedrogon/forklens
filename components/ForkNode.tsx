@@ -1,51 +1,67 @@
-// components/ForkNode.tsx
 'use client';
 import React, { memo } from 'react';
 import { Handle, Position } from 'reactflow';
-import { GitFork, Star, Clock } from 'lucide-react';
+import { GitFork, Star, Clock, ExternalLink } from 'lucide-react';
 
+// Memoize strictly to prevent re-renders during drag
 const ForkNode = ({ data }: any) => {
   return (
-    <div className="w-70 bg-white border-2 border-black rounded-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden font-sans transition-transform hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-      
-      {/* Header with Avatar */}
-      <div className="flex items-center gap-3 p-3 border-b-2 border-black bg-gray-50">
-        <img 
-          src={data.avatar} 
-          alt="avatar" 
-          className="w-10 h-10 rounded-full border border-black" 
-        />
-        <div className="overflow-hidden">
-          <h3 className="font-bold text-sm truncate">{data.label}</h3>
+    <div className="relative group w-70">
+      {/* PERFORMANCE OPTIMIZATION: 
+         Removed heavy blur/box-shadow transitions. 
+         Using simplified border logic.
+      */}
+      <div className={`
+        bg-white border-2 border-black rounded-xl overflow-hidden
+        shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] 
+        transition-transform duration-75 ease-out
+        group-hover:-translate-y-1 group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]
+      `}>
+        
+        {/* Header */}
+        <div className="flex items-center gap-3 p-3 border-b-2 border-black bg-gray-50/50">
+          <img 
+            src={data.avatar} 
+            loading="lazy" // <--- Lazy load avatars
+            alt="" 
+            className="w-8 h-8 rounded-full border border-black bg-gray-200" 
+          />
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-sm truncate leading-tight">{data.label}</h3>
+            <div className="flex items-center gap-1 text-[10px] text-gray-500 font-bold uppercase tracking-wider">
+               {data.daysAgo} days ago
+            </div>
+          </div>
+        </div>
+
+        {/* Action Row */}
+        <div className="flex items-center justify-between p-2 bg-white">
+          <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 border border-black rounded-md text-xs font-bold">
+            <Star size={10} className="fill-yellow-500 stroke-yellow-700" />
+            {data.stars}
+          </div>
+          
           <a 
             href={data.url} 
             target="_blank" 
             rel="noreferrer"
-            className="text-xs text-blue-600 hover:underline"
+            // Stop drag propagation so you can click the link without dragging the node
+            onMouseDown={(e) => e.stopPropagation()} 
+            className="flex items-center gap-1 text-xs font-bold text-black hover:text-purple-600 transition-colors"
           >
-            View Repo ↗
+            Visit <ExternalLink size={10} />
           </a>
         </div>
       </div>
 
-      {/* Stats Row */}
-      <div className="p-3 grid grid-cols-2 gap-2 text-sm">
-        <div className="flex items-center gap-1 text-yellow-600 font-bold">
-          <Star size={16} fill="currentColor" />
-          <span>{data.stars}</span>
-        </div>
-        
-        <div className={`flex items-center gap-1 font-bold ${data.daysAgo < 30 ? 'text-green-600' : 'text-gray-400'}`}>
-          <Clock size={16} />
-          <span>{data.daysAgo}d ago</span>
-        </div>
-      </div>
-
-      {/* React Flow Connection Handles */}
-      <Handle type="target" position={Position.Top} className="bg-black! w-3! h-3!" />
-      <Handle type="source" position={Position.Bottom} className="bg-black! w-3! h-3!" />
+      {/* Handles - Keep them strictly invisible to save render time */}
+      <Handle type="target" position={Position.Top} className="w-1! h-1! opacity-0!" />
+      <Handle type="source" position={Position.Bottom} className="w-1! h-1! opacity-0!" />
     </div>
   );
 };
 
-export default memo(ForkNode);
+// Strict comparison to prevent re-renders when parent changes
+export default memo(ForkNode, (prev, next) => {
+  return prev.data.label === next.data.label && prev.selected === next.selected;
+});

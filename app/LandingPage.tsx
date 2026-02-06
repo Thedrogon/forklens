@@ -14,6 +14,9 @@ import LandingGraph from "@/components/LandingGraph";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import HowItWorks from "@/components/HowItWorks";
+import SocialProof from "@/components/SocialProof";
+import Pricing from "@/components/Pricing";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -357,6 +360,16 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+      )}
+
+      {view === "search" && (
+        <>
+        
+        <HowItWorks/>
+        <SocialProof/>
+        <Pricing/>
+        </>
+
       )}
 
       {view === "search" && <Footer />}
