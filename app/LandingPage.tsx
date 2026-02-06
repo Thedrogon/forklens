@@ -15,7 +15,14 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+
+
 gsap.registerPlugin(ScrollTrigger);
+
+
+const nodeTypes = {
+  forkNode: ForkNode,
+};
 
 export default function LandingPage() {
   const [input, setInput] = useState("");
@@ -31,8 +38,6 @@ export default function LandingPage() {
   const heroTextRef = useRef<HTMLDivElement>(null);
   const heroInputRef = useRef<HTMLDivElement>(null);
   const featureSectionRef = useRef<HTMLDivElement>(null);
-
-  const nodeTypes = useMemo(() => ({ forkNode: ForkNode }), []);
 
   useGSAP(() => {
     if (view === "search") {

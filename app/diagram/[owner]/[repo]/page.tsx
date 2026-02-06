@@ -13,9 +13,7 @@ import { getForkData, saveGraph } from "@/app/action";
 // ... processGraph helper function remains exactly the same ...
 // Inside app/diagram/[owner]/[repo]/page.tsx
 
-// Inside app/diagram/[owner]/[repo]/page.tsx
 
-// Inside app/diagram/[owner]/[repo]/page.tsx
 
 const processGraph = (data: any, rootName: string, currentMode: 'graph' | 'timeline') => {
   if (!data || !data.forks) return { nodes: [], edges: [] };
@@ -96,6 +94,11 @@ const processGraph = (data: any, rootName: string, currentMode: 'graph' | 'timel
   return { nodes: newNodes, edges: newEdges };
 };
 
+
+const nodeTypes = {
+  forkNode: ForkNode,
+};
+
 export default function DiagramPage({
   params,
 }: {
@@ -111,8 +114,7 @@ export default function DiagramPage({
   const [rawRepoData, setRawRepoData] = useState<any>(null);
 
   const router = useRouter();
-  const nodeTypes = useMemo(() => ({ forkNode: ForkNode }), []);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
