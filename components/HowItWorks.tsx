@@ -70,7 +70,7 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section ref={container} className="py-24 bg-[#FACC15] overflow-hidden">
+    <section ref={container} className="py-24 bg-[#FACC15] overflow-hidden border-b-2 border-black">
       <div className="max-w-6xl mx-auto px-6">
         
         {/* Header: Modern 3D Shadow (Solid, sharp offset) */}

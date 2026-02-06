@@ -14,22 +14,40 @@ export default function Pricing() {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: container.current,
-        start: "top 70%",
+        start: "top 75%", // Trigger slightly earlier so it's ready when user sees it
+        toggleActions: "play none none reverse",
+        fastScrollEnd: true, // <--- KEY FIX: Forces animation to finish if user scrolls past quickly
       }
     });
 
     tl.fromTo('.free-plan',
       { x: -50, opacity: 0 },
-      { x: 0, opacity: 1, duration: 0.6 }
+      { x: 0, opacity: 1, duration: 0.5, ease: "power2.out" }
     )
     .fromTo('.pro-plan',
-      { y: -200, opacity: 0, scale: 1.1 },
-      { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: "bounce.out" }, 
+      { y: -100, opacity: 0, scale: 1.1 }, // Reduced y distance for tighter feel
+      { 
+        y: 0, 
+        opacity: 1, 
+        scale: 1, 
+        duration: 0.6, // Faster duration
+        ease: "back.out(2)", // Snappy "thud" instead of floaty "bounce"
+      }, 
       "-=0.3"
     )
-    .to('.pro-plan', { rotation: 2, duration: 0.1, yoyo: true, repeat: 5, ease: "linear" });
+    // The wiggle needs to be faster or it feels like lag
+    .to('.pro-plan', { 
+      rotation: 3, 
+      duration: 0.08, 
+      yoyo: true, 
+      repeat: 3, // Reduced repeats (5 was too long)
+      ease: "linear",
+      clearProps: "rotation" // Clean up afterwards
+    });
 
   }, { scope: container });
+
+  
   return (
     // BG: HOT PINK (#F472B6) - Distinct from Hero
     <section id="pricing" ref={container} className="py-24 bg-[#F472B6] border-b-2 border-black overflow-hidden relative">

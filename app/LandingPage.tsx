@@ -325,7 +325,7 @@ export default function LandingPage() {
             <div className="max-w-6xl mx-auto">
               <div className="grid md:grid-cols-2 gap-12 items-center mb-24 feature-card">
                 <div className="space-y-6">
-                  <h2 className="text-4xl font-black tracking-tight">
+                  <h2 className="text-5xl font-black tracking-tight">
                     Don't just look. <br /> Interact with it.
                   </h2>
                   <p className="text-lg text-gray-600">
