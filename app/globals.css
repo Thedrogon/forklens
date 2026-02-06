@@ -3,3 +3,7 @@
 @theme{
    --gradient-primary: linear-gradient(to right, #9810fa, oklch(59.2% 0.249 0.584));
 }
+
+*{
+   cursor: none;
+}

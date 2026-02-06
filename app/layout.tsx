@@ -5,6 +5,7 @@ import "./globals.css";
 
 // 1. Import the new Providers component
 import { Providers } from "./providers"; 
+import CustomCursor from "@/components/CustomCursor";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         {/* 2. Wrap the children inside Providers */}
+        <CustomCursor/>
         <Providers>
           {children}
         </Providers>

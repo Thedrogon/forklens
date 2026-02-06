@@ -15,13 +15,89 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-
-
 gsap.registerPlugin(ScrollTrigger);
-
 
 const nodeTypes = {
   forkNode: ForkNode,
+};
+
+// 2. HELPER FUNCTION MOVED OUTSIDE
+// Now it returns data instead of setting state directly
+const processGraph = (
+  data: any,
+  rootName: string,
+  currentMode: "graph" | "timeline",
+) => {
+  const mainNode: Node = {
+    id: "root",
+    type: "input",
+    data: { label: rootName },
+    position: { x: 0, y: 0 },
+    style: {
+      background: "#111",
+      color: "#fff",
+      border: "2px solid #000",
+      fontWeight: "bold",
+      width: 180,
+      padding: 10,
+      borderRadius: 8,
+      textAlign: "center",
+    },
+  };
+
+  let newNodes: Node[] = [mainNode];
+  let newEdges: Edge[] = [];
+
+  if (data && data.forks) {
+    data.forks.nodes.forEach((fork: any, index: number) => {
+      const daysAgo = Math.floor(
+        (new Date().getTime() - new Date(fork.pushedAt).getTime()) /
+          (1000 * 3600 * 24),
+      );
+      const isActive = daysAgo < 30;
+      let x = 0,
+        y = 0;
+
+      if (currentMode === "timeline") {
+        x = 600 - daysAgo * 3;
+        y = (index % 2 === 0 ? -1 : 1) * (Math.random() * 400);
+        mainNode.position = { x: 700, y: 0 };
+      } else {
+        const angle = (index / (data.forks.nodes.length + 1)) * 2 * Math.PI;
+        const radius = 400 + index * 10;
+        x = Math.cos(angle) * radius;
+        y = Math.sin(angle) * radius;
+        mainNode.position = { x: 0, y: 0 };
+      }
+
+      newNodes.push({
+        id: fork.nameWithOwner,
+        type: "forkNode",
+        data: {
+          label: fork.nameWithOwner,
+          avatar: fork.owner.avatarUrl,
+          stars: fork.stargazerCount,
+          daysAgo: daysAgo,
+          url: fork.url,
+        },
+        position: { x, y },
+        draggable: true,
+      });
+
+      newEdges.push({
+        id: `e-root-${fork.nameWithOwner}`,
+        source: "root",
+        target: fork.nameWithOwner,
+        animated: isActive,
+        style: {
+          stroke: isActive ? "#84cc16" : "#cbd5e1",
+          strokeWidth: isActive ? 2 : 1,
+        },
+      });
+    });
+  }
+
+  return { nodes: newNodes, edges: newEdges };
 };
 
 export default function LandingPage() {
@@ -105,7 +181,16 @@ export default function LandingPage() {
     if (result.success && result.data) {
       setLastData(result.data);
       setLastRoot(`${owner}/${repo}`);
-      processGraph(result.data, `${owner}/${repo}`, mode);
+
+      // 3. USE THE EXTERNAL FUNCTION & SET STATE
+      const { nodes: newNodes, edges: newEdges } = processGraph(
+        result.data,
+        `${owner}/${repo}`,
+        mode,
+      );
+      setNodes(newNodes);
+      setEdges(newEdges);
+
       setView("graph");
     } else {
       alert("Repo not found or API limit reached!");
@@ -113,85 +198,18 @@ export default function LandingPage() {
     setLoading(false);
   };
 
-  const processGraph = (
-    data: any,
-    rootName: string,
-    currentMode: "graph" | "timeline",
-  ) => {
-    const mainNode: Node = {
-      id: "root",
-      type: "input",
-      data: { label: rootName },
-      position: { x: 0, y: 0 },
-      style: {
-        background: "#111",
-        color: "#fff",
-        border: "2px solid #000",
-        fontWeight: "bold",
-        width: 180,
-        padding: 10,
-        borderRadius: 8,
-        textAlign: "center",
-      },
-    };
-
-    let newNodes: Node[] = [mainNode];
-    let newEdges: Edge[] = [];
-
-    data.forks.nodes.forEach((fork: any, index: number) => {
-      const daysAgo = Math.floor(
-        (new Date().getTime() - new Date(fork.pushedAt).getTime()) /
-          (1000 * 3600 * 24),
-      );
-      const isActive = daysAgo < 30;
-      let x = 0,
-        y = 0;
-
-      if (currentMode === "timeline") {
-        x = 600 - daysAgo * 3;
-        y = (index % 2 === 0 ? -1 : 1) * (Math.random() * 400);
-        mainNode.position = { x: 700, y: 0 };
-      } else {
-        const angle = (index / (data.forks.nodes.length + 1)) * 2 * Math.PI;
-        const radius = 400 + index * 10;
-        x = Math.cos(angle) * radius;
-        y = Math.sin(angle) * radius;
-        mainNode.position = { x: 0, y: 0 };
-      }
-
-      newNodes.push({
-        id: fork.nameWithOwner,
-        type: "forkNode",
-        data: {
-          label: fork.nameWithOwner,
-          avatar: fork.owner.avatarUrl,
-          stars: fork.stargazerCount,
-          daysAgo: daysAgo,
-          url: fork.url,
-        },
-        position: { x, y },
-        draggable: true,
-      });
-
-      newEdges.push({
-        id: `e-root-${fork.nameWithOwner}`,
-        source: "root",
-        target: fork.nameWithOwner,
-        animated: isActive,
-        style: {
-          stroke: isActive ? "#84cc16" : "#cbd5e1",
-          strokeWidth: isActive ? 2 : 1,
-        },
-      });
-    });
-
-    setNodes(newNodes);
-    setEdges(newEdges);
-  };
-
   const toggleMode = (newMode: "graph" | "timeline") => {
     setMode(newMode);
-    if (lastData && lastRoot) processGraph(lastData, lastRoot, newMode);
+    if (lastData && lastRoot) {
+      // 3. RE-USE HERE TOO
+      const { nodes: newNodes, edges: newEdges } = processGraph(
+        lastData,
+        lastRoot,
+        newMode,
+      );
+      setNodes(newNodes);
+      setEdges(newEdges);
+    }
   };
 
   return (
