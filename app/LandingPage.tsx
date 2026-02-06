@@ -14,6 +14,8 @@ import LandingGraph from "@/components/LandingGraph";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// NEW SECTIONS
 import HowItWorks from "@/components/HowItWorks";
 import SocialProof from "@/components/SocialProof";
 import Pricing from "@/components/Pricing";
@@ -24,8 +26,7 @@ const nodeTypes = {
   forkNode: ForkNode,
 };
 
-// 2. HELPER FUNCTION MOVED OUTSIDE
-// Now it returns data instead of setting state directly
+// --- HELPER FUNCTION ---
 const processGraph = (
   data: any,
   rootName: string,
@@ -185,7 +186,6 @@ export default function LandingPage() {
       setLastData(result.data);
       setLastRoot(`${owner}/${repo}`);
 
-      // 3. USE THE EXTERNAL FUNCTION & SET STATE
       const { nodes: newNodes, edges: newEdges } = processGraph(
         result.data,
         `${owner}/${repo}`,
@@ -204,7 +204,6 @@ export default function LandingPage() {
   const toggleMode = (newMode: "graph" | "timeline") => {
     setMode(newMode);
     if (lastData && lastRoot) {
-      // 3. RE-USE HERE TOO
       const { nodes: newNodes, edges: newEdges } = processGraph(
         lastData,
         lastRoot,
@@ -218,38 +217,47 @@ export default function LandingPage() {
   return (
     <main
       ref={containerRef}
-      className="min-h-screen bg-[#FDF4FF] font-sans text-gray-900 pt-20 flex flex-col cursor-(--primary-gradient)"
+      className="min-h-screen font-sans flex flex-col"
     >
-      {/* 1. Standard Navbar for Guests (Login Button) */}
       <Navbar />
 
-      {/* --- HERO SECTION --- */}
+      {/* --- HERO SECTION: DEEP BLUEBERRY --- */}
       {view === "search" ? (
-        <div className="grow flex flex-col items-center justify-center min-h-[80vh] px-4 relative">
+        <div className="grow flex flex-col items-center justify-center min-h-[95vh] px-4 relative bg-[#1E1B4B] border-b-2 border-black">
+          {/* Dot Pattern Overlay */}
+          <div className="absolute inset-0 opacity-14" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+
           <div
             ref={heroTextRef}
-            className="w-full max-w-3xl text-center space-y-8"
+            className="w-full max-w-4xl text-center space-y-8 z-10"
           >
-            <div className="inline-block bg-yellow-300 border-2 border-black px-3 py-1 rounded-full font-bold text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 mb-4">
+            {/* Badge */}
+            <div className="inline-block bg-[#FACC15] border-2 border-black px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-[4px_4px_0px_0px_white] transform -rotate-2 mb-6">
               ✨ New: Timeline View Added!
             </div>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.1]">
-              Stop Digging Through <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
-                Dead Forks.
+            
+            {/* Title - WHITE */}
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+              STOP DIGGING <br />
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#C084FC] to-[#F472B6]">
+                DEAD FORKS.
               </span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Visualize repository history. Free for open source.
+            
+            {/* Subtitle - Gray-300 */}
+            <p className="text-2xl text-gray-300 max-w-2xl mx-auto font-bold">
+              Visualize repository history. <span className="text-white underline decoration-wavy decoration-[#F472B6]">Free for open source.</span>
             </p>
+
+            {/* Input - White BG for Contrast */}
             <div
               ref={heroInputRef}
-              className="bg-white p-2 rounded-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-2 border-black flex gap-2 max-w-xl mx-auto transform hover:scale-[1.02] transition-transform duration-300"
+              className="bg-white p-2 rounded-xl shadow-[8px_8px_0px_0px_#C084FC] border-2 border-black flex gap-2 max-w-xl mx-auto transform hover:scale-[1.02] transition-transform duration-300 mt-8"
             >
               <input
                 type="text"
                 placeholder="facebook/react"
-                className="flex-1 outline-none px-4 text-lg bg-transparent"
+                className="flex-1 outline-none px-4 text-lg bg-transparent text-black font-bold placeholder:text-gray-400"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -257,18 +265,19 @@ export default function LandingPage() {
               <button
                 onClick={handleSearch}
                 disabled={loading}
-                className="bg-[#C084FC] hover:bg-[#A855F7] text-black font-bold px-6 py-3 rounded-lg border-2 border-black transition-all active:translate-y-1 active:shadow-none"
+                className="bg-[#1E1B4B] text-white hover:bg-black font-black px-8 py-4 rounded-lg border-2 border-black transition-all active:translate-y-1 active:shadow-none"
               >
-                {loading ? "Scanning..." : "Diagram"}
+                {loading ? "Scanning..." : "DIAGRAM"}
               </button>
             </div>
           </div>
-          <div className="absolute bottom-10 scroll-arrow">
-            <ArrowRight className="rotate-90 w-6 h-6 text-gray-400" />
+          
+          <div className="absolute bottom-10 scroll-arrow animate-bounce">
+            <ArrowRight className="rotate-90 w-8 h-8 text-white" />
           </div>
         </div>
       ) : (
-        /* --- GRAPH VIEW --- */
+        /* --- GRAPH VIEW (Unchanged) --- */
         <div className="h-[calc(100vh-80px)] w-full relative bg-white border-t-2 border-black">
           <button
             onClick={() => setView("search")}
@@ -304,72 +313,80 @@ export default function LandingPage() {
         </div>
       )}
 
-      {/* --- FEATURE SECTION --- */}
-      {view === "search" && (
-        <section
-          ref={featureSectionRef}
-          id="features"
-          className="py-20 px-6 border-t-2 border-black bg-white"
-        >
-          <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12 items-center mb-24 feature-card">
-              <div className="space-y-6">
-                <h2 className="text-4xl font-black tracking-tight">
-                  Don't just look. <br /> Interact with it.
-                </h2>
-                <p className="text-lg text-gray-600">
-                  Try it right now. This is a live visualization.
-                </p>
-                {/* List items ... */}
-              </div>
-              <div className="relative group h-100">
-                <div className="absolute inset-0 bg-black rounded-2xl transform translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform"></div>
-                <div className="relative bg-white border-2 border-black rounded-2xl overflow-hidden w-full h-full shadow-inner">
-                  <LandingGraph />
-                </div>
-              </div>
-            </div>
-            {/* Feature Cards Grid */}
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  title: "Timeline View",
-                  icon: Clock,
-                  desc: "See forks arranged by time.",
-                },
-                {
-                  title: "Save & Share",
-                  icon: Star,
-                  desc: "Logged in users can save up to 4 graphs.",
-                },
-                {
-                  title: "Daily Quotas",
-                  icon: Zap,
-                  desc: "Smart rate limiting ensures fair usage.",
-                },
-              ].map((feature, i) => (
-                <div
-                  key={i}
-                  className="feature-card bg-[#FDF4FF] p-6 border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
-                >
-                  <feature.icon className="w-10 h-10 mb-4 text-purple-600" />
-                  <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                  <p className="text-gray-600 text-sm">{feature.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
+      {/* --- MARKETING SECTIONS (Only in Search Mode) --- */}
       {view === "search" && (
         <>
-        
-        <HowItWorks/>
-        <SocialProof/>
-        <Pricing/>
-        </>
+          {/* Features Section (White) */}
+          <section
+            ref={featureSectionRef}
+            id="features"
+            className="py-20 px-6 bg-white border-b-2 border-black"
+          >
+            <div className="max-w-6xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-12 items-center mb-24 feature-card">
+                <div className="space-y-6">
+                  <h2 className="text-4xl font-black tracking-tight">
+                    Don't just look. <br /> Interact with it.
+                  </h2>
+                  <p className="text-lg text-gray-600">
+                    Try it right now. This is a live visualization.
+                  </p>
+                  <ul className="space-y-3">
+                    {["Drag to pan", "Scroll to zoom", "Click nodes to visit"].map(
+                      (item, i) => (
+                        <li key={i} className="flex items-center gap-3 font-bold">
+                          <div className="w-6 h-6 bg-green-400 border-2 border-black rounded-full flex items-center justify-center text-xs">✓</div>
+                          {item}
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                </div>
+                <div className="relative group h-96">
+                  <div className="absolute inset-0 bg-black rounded-2xl transform translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform"></div>
+                  <div className="relative bg-white border-2 border-black rounded-2xl overflow-hidden w-full h-full shadow-inner">
+                    <LandingGraph />
+                  </div>
+                </div>
+              </div>
 
+              {/* Feature Grid */}
+              <div className="grid md:grid-cols-3 gap-6">
+                {[
+                  {
+                    title: "Timeline View",
+                    icon: Clock,
+                    desc: "See forks arranged by time.",
+                  },
+                  {
+                    title: "Save & Share",
+                    icon: Star,
+                    desc: "Logged in users can save up to 4 graphs.",
+                  },
+                  {
+                    title: "Daily Quotas",
+                    icon: Zap,
+                    desc: "Smart rate limiting ensures fair usage.",
+                  },
+                ].map((feature, i) => (
+                  <div
+                    key={i}
+                    className="feature-card bg-[#FDF4FF] p-6 border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
+                  >
+                    <feature.icon className="w-10 h-10 mb-4 text-purple-600" />
+                    <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                    <p className="text-gray-600 text-sm">{feature.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* New Sections */}
+          <HowItWorks /> 
+          <SocialProof />
+          <Pricing />
+        </>
       )}
 
       {view === "search" && <Footer />}

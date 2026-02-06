@@ -32,7 +32,7 @@ export default function SocialProof() {
   ];
 
   return (
-    <section ref={container} className="py-24 bg-white border-b-2 border-black">
+    <section ref={container} className="py-30 bg-white border-b-2 border-black">
       <div className="max-w-6xl mx-auto px-6">
         <h2 className="text-4xl font-black text-center mb-16 uppercase">
           Devs <span className="text-purple-600">Love</span> ForkLens
