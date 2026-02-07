@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { useState, useMemo, useRef } from "react";
-import ReactFlow, { Background, Controls, Node, Edge } from "reactflow";
-import "reactflow/dist/style.css";
-import { Clock, Zap, Layout, ArrowRight, Star } from "lucide-react";
-import { getForkData } from "./action";
-import ForkNode from "@/components/ForkNode";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import LandingGraph from "@/components/LandingGraph";
+import { useState, useMemo, useRef } from 'react';
+import ReactFlow, { Background, Controls, Node, Edge } from 'reactflow';
+import 'reactflow/dist/style.css';
+import { Clock, Zap, Layout, ArrowRight, Star } from 'lucide-react';
+import { getForkData } from './action';
+import ForkNode from '@/components/ForkNode';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import LandingGraph from '@/components/LandingGraph';
 
 // GSAP
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // NEW SECTIONS
-import HowItWorks from "@/components/HowItWorks";
-import SocialProof from "@/components/SocialProof";
-import Pricing from "@/components/Pricing";
+import HowItWorks from '@/components/HowItWorks';
+import SocialProof from '@/components/SocialProof';
+import Pricing from '@/components/Pricing';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,25 +27,21 @@ const nodeTypes = {
 };
 
 // --- HELPER FUNCTION ---
-const processGraph = (
-  data: any,
-  rootName: string,
-  currentMode: "graph" | "timeline",
-) => {
+const processGraph = (data: any, rootName: string, currentMode: 'graph' | 'timeline') => {
   const mainNode: Node = {
-    id: "root",
-    type: "input",
+    id: 'root',
+    type: 'input',
     data: { label: rootName },
     position: { x: 0, y: 0 },
     style: {
-      background: "#111",
-      color: "#fff",
-      border: "2px solid #000",
-      fontWeight: "bold",
+      background: '#111',
+      color: '#fff',
+      border: '2px solid #000',
+      fontWeight: 'bold',
       width: 180,
       padding: 10,
       borderRadius: 8,
-      textAlign: "center",
+      textAlign: 'center',
     },
   };
 
@@ -54,15 +50,12 @@ const processGraph = (
 
   if (data && data.forks) {
     data.forks.nodes.forEach((fork: any, index: number) => {
-      const daysAgo = Math.floor(
-        (new Date().getTime() - new Date(fork.pushedAt).getTime()) /
-          (1000 * 3600 * 24),
-      );
+      const daysAgo = Math.floor((new Date().getTime() - new Date(fork.pushedAt).getTime()) / (1000 * 3600 * 24));
       const isActive = daysAgo < 30;
       let x = 0,
         y = 0;
 
-      if (currentMode === "timeline") {
+      if (currentMode === 'timeline') {
         x = 600 - daysAgo * 3;
         y = (index % 2 === 0 ? -1 : 1) * (Math.random() * 400);
         mainNode.position = { x: 700, y: 0 };
@@ -76,7 +69,7 @@ const processGraph = (
 
       newNodes.push({
         id: fork.nameWithOwner,
-        type: "forkNode",
+        type: 'forkNode',
         data: {
           label: fork.nameWithOwner,
           avatar: fork.owner.avatarUrl,
@@ -90,11 +83,11 @@ const processGraph = (
 
       newEdges.push({
         id: `e-root-${fork.nameWithOwner}`,
-        source: "root",
+        source: 'root',
         target: fork.nameWithOwner,
         animated: isActive,
         style: {
-          stroke: isActive ? "#84cc16" : "#cbd5e1",
+          stroke: isActive ? '#84cc16' : '#cbd5e1',
           strokeWidth: isActive ? 2 : 1,
         },
       });
@@ -105,14 +98,14 @@ const processGraph = (
 };
 
 export default function LandingPage() {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
-  const [view, setView] = useState<"search" | "graph">("search");
-  const [mode, setMode] = useState<"graph" | "timeline">("graph");
+  const [view, setView] = useState<'search' | 'graph'>('search');
+  const [mode, setMode] = useState<'graph' | 'timeline'>('graph');
   const [lastData, setLastData] = useState<any>(null);
-  const [lastRoot, setLastRoot] = useState<string>("");
+  const [lastRoot, setLastRoot] = useState<string>('');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const heroTextRef = useRef<HTMLDivElement>(null);
@@ -120,12 +113,12 @@ export default function LandingPage() {
   const featureSectionRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    if (view === "search") {
+    if (view === 'search') {
       if (heroTextRef.current) {
         gsap.fromTo(
           heroTextRef.current,
           { y: 50, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.2 },
+          { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.2 }
         );
       }
 
@@ -137,21 +130,21 @@ export default function LandingPage() {
             scale: 1,
             opacity: 1,
             duration: 0.8,
-            ease: "back.out(1.7)",
+            ease: 'back.out(1.7)',
             delay: 0.6,
-          },
+          }
         );
       }
 
-      gsap.to(".scroll-arrow", {
+      gsap.to('.scroll-arrow', {
         y: 10,
         repeat: -1,
         yoyo: true,
         duration: 0.8,
-        ease: "power1.inOut",
+        ease: 'power1.inOut',
       });
 
-      const cards = gsap.utils.toArray(".feature-card");
+      const cards = gsap.utils.toArray('.feature-card');
       if (cards.length > 0) {
         gsap.fromTo(
           cards,
@@ -161,24 +154,24 @@ export default function LandingPage() {
             opacity: 1,
             duration: 0.8,
             stagger: 0.2,
-            ease: "power3.out",
+            ease: 'power3.out',
             scrollTrigger: {
               trigger: featureSectionRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
             },
-          },
+          }
         );
       }
     }
   }, [view]);
 
   const handleSearch = async () => {
-    const cleanInput = input.replace("https://github.com/", "");
-    if (!cleanInput.includes("/")) return alert("Use format: owner/repo");
+    const cleanInput = input.replace('https://github.com/', '');
+    if (!cleanInput.includes('/')) return alert('Use format: owner/repo');
 
     setLoading(true);
-    const [owner, repo] = cleanInput.split("/");
+    const [owner, repo] = cleanInput.split('/');
 
     const result = await getForkData(owner, repo);
 
@@ -186,88 +179,75 @@ export default function LandingPage() {
       setLastData(result.data);
       setLastRoot(`${owner}/${repo}`);
 
-      const { nodes: newNodes, edges: newEdges } = processGraph(
-        result.data,
-        `${owner}/${repo}`,
-        mode,
-      );
+      const { nodes: newNodes, edges: newEdges } = processGraph(result.data, `${owner}/${repo}`, mode);
       setNodes(newNodes);
       setEdges(newEdges);
 
-      setView("graph");
+      setView('graph');
     } else {
-      alert("Repo not found or API limit reached!");
+      alert('Repo not found or API limit reached!');
     }
     setLoading(false);
   };
 
-  const toggleMode = (newMode: "graph" | "timeline") => {
+  const toggleMode = (newMode: 'graph' | 'timeline') => {
     setMode(newMode);
     if (lastData && lastRoot) {
-      const { nodes: newNodes, edges: newEdges } = processGraph(
-        lastData,
-        lastRoot,
-        newMode,
-      );
+      const { nodes: newNodes, edges: newEdges } = processGraph(lastData, lastRoot, newMode);
       setNodes(newNodes);
       setEdges(newEdges);
     }
   };
 
   return (
-    <main ref={containerRef} className="min-h-screen font-sans flex flex-col">
+    <main ref={containerRef} className="flex min-h-screen flex-col font-sans">
       <Navbar />
 
       {/* --- HERO SECTION: DEEP BLUEBERRY --- */}
-      {view === "search" ? (
-        <div className="grow flex flex-col items-center justify-center min-h-[95vh] px-4 relative bg-[#1E1B4B] border-b-2 border-black overflow-hidden">
+      {view === 'search' ? (
+        <div className="relative flex min-h-[95vh] grow flex-col items-center justify-center overflow-hidden border-b-2 border-black bg-[#1E1B4B] px-4">
           {/* Dot Pattern Overlay */}
           <div
             className="absolute inset-0 opacity-14"
             style={{
-              backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)",
-              backgroundSize: "30px 30px",
+              backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)',
+              backgroundSize: '30px 30px',
             }}
           ></div>
 
-          <div
-            ref={heroTextRef}
-            className="w-full max-w-4xl text-center space-y-8 z-10"
-          >
+          <div ref={heroTextRef} className="z-10 w-full max-w-4xl space-y-8 text-center">
             {/* Badge */}
-            <div className="inline-block bg-[#FACC15] border-2 border-black px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-[4px_4px_0px_0px_white] transform -rotate-2 mb-6">
+            <div className="mb-6 inline-block -rotate-2 transform rounded-full border-2 border-black bg-[#FACC15] px-4 py-1.5 text-xs font-black tracking-widest uppercase shadow-[4px_4px_0px_0px_white]">
               ✨ New: Timeline View Added!
             </div>
 
             {/* Title - Responsive sizing */}
-            <h1 className="text-5xl md:text-6xl font-black tracking-tighter leading-[0.9] text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+            <h1 className="text-5xl leading-[0.9] font-black tracking-tighter text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] md:text-6xl">
               STOP DIGGING <br />
-              <span className="text-transparent md:text-8xl bg-clip-text bg-linear-to-r from-[#C084FC] to-[#F472B6]">
+              <span className="animate-gradient-x bg-linear-to-r from-[#C084FC] via-[#F472B6] to-[#C084FC] bg-clip-text font-black text-transparent md:text-8xl">
                 DEAD FORKS.
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto font-bold px-2">
-              Visualize repository history.{" "}
-              <span className="text-white underline decoration-wavy decoration-[#F472B6]">
-                Free for open source.
-              </span>
+            <p className="mx-auto max-w-2xl px-2 text-xl font-bold text-gray-300 md:text-2xl">
+              Visualize repository history.{' '}
+              <span className="text-white underline decoration-[#F472B6] decoration-wavy">Free for open source.</span>
             </p>
 
             {/* Input Container - Always Row, No Stacking */}
             <div
               ref={heroInputRef}
-              className="bg-white p-2 rounded-xl shadow-[8px_8px_0px_0px_#C084FC] border-2 border-black flex flex-row items-center gap-2 max-w-xl w-full mx-auto transform hover:scale-[1.02] transition-transform duration-300 mt-8"
+              className="mx-auto mt-8 flex w-full max-w-xl transform flex-row items-center gap-2 rounded-xl border-2 border-black bg-white p-2 shadow-[8px_8px_0px_0px_#C084FC] transition-transform duration-300 hover:scale-[1.02]"
             >
               <input
                 type="text"
                 placeholder="facebook/react"
                 // KEY FIX 1: 'min-w-0' allows the input to shrink below its default size on tiny screens
-                className="flex-1 min-w-0 outline-none px-2 md:px-4 text-base md:text-lg bg-transparent text-black font-bold placeholder:text-gray-400"
+                className="min-w-0 flex-1 bg-transparent px-2 text-base font-bold text-black outline-none placeholder:text-gray-400 md:px-4 md:text-lg"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
 
               <button
@@ -275,80 +255,64 @@ export default function LandingPage() {
                 disabled={loading}
                 // KEY FIX 2: Reduced padding (px-4) and text size (text-sm) on mobile.
                 // 'shrink-0' ensures the button doesn't get squashed.
-                className="bg-[#1E1B4B] text-white hover:bg-black font-black text-sm md:text-base shrink-0 px-4 py-3 md:px-8 md:py-4 rounded-lg border-2 border-black transition-all active:translate-y-1 active:shadow-none whitespace-nowrap"
+                className="shrink-0 rounded-lg border-2 border-black bg-[#1E1B4B] px-4 py-3 text-sm font-black whitespace-nowrap text-white transition-all hover:bg-black active:translate-y-1 active:shadow-none md:px-8 md:py-4 md:text-base"
               >
-                {loading ? "..." : "DIAGRAM"}
+                {loading ? '...' : 'DIAGRAM'}
               </button>
             </div>
           </div>
 
-          <div className="absolute bottom-10 scroll-arrow animate-bounce">
-            <ArrowRight className="rotate-90 w-8 h-8 text-white" />
+          <div className="scroll-arrow absolute bottom-10 animate-bounce">
+            <ArrowRight className="h-8 w-8 rotate-90 text-white" />
           </div>
         </div>
       ) : (
         /* --- GRAPH VIEW (Unchanged) --- */
-        <div className="h-[calc(100vh-80px)] w-full relative bg-white border-t-2 border-black">
+        <div className="relative h-[calc(100vh-80px)] w-full border-t-2 border-black bg-white">
           <button
-            onClick={() => setView("search")}
-            className="absolute top-5 left-5 z-20 bg-white px-4 py-2 border-2 border-black rounded-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all font-bold text-sm"
+            onClick={() => setView('search')}
+            className="absolute top-5 left-5 z-20 rounded-lg border-2 border-black bg-white px-4 py-2 text-sm font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-y-1 hover:shadow-none"
           >
             ← New Search
           </button>
-          <div className="absolute top-5 right-5 z-20 flex bg-white border-2 border-black rounded-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+          <div className="absolute top-5 right-5 z-20 flex overflow-hidden rounded-lg border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <button
-              onClick={() => toggleMode("graph")}
-              className={`px-4 py-2 font-bold text-sm transition-colors ${mode === "graph" ? "bg-[#C084FC] text-black" : "hover:bg-gray-100"}`}
+              onClick={() => toggleMode('graph')}
+              className={`px-4 py-2 text-sm font-bold transition-colors ${mode === 'graph' ? 'bg-[#C084FC] text-black' : 'hover:bg-gray-100'}`}
             >
               Graph
             </button>
             <div className="w-0.5 bg-black"></div>
             <button
-              onClick={() => toggleMode("timeline")}
-              className={`px-4 py-2 font-bold text-sm transition-colors ${mode === "timeline" ? "bg-[#C084FC] text-black" : "hover:bg-gray-100"}`}
+              onClick={() => toggleMode('timeline')}
+              className={`px-4 py-2 text-sm font-bold transition-colors ${mode === 'timeline' ? 'bg-[#C084FC] text-black' : 'hover:bg-gray-100'}`}
             >
               Timeline
             </button>
           </div>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            fitView
-            minZoom={0.1}
-          >
+          <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView minZoom={0.1}>
             <Background color="#ccc" gap={20} />
-            <Controls className="bg-white! border-2! border-black! shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]!" />
+            <Controls className="border-2! border-black! bg-white! shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]!" />
           </ReactFlow>
         </div>
       )}
 
       {/* --- MARKETING SECTIONS (Only in Search Mode) --- */}
-      {view === "search" && (
+      {view === 'search' && (
         <>
           {/* Features Section (White) */}
-          <section
-            ref={featureSectionRef}
-            id="features"
-            className="py-20 px-6 bg-white border-b-2 border-black"
-          >
-            <div className="max-w-6xl mx-auto">
-              <div className="grid md:grid-cols-2 gap-12 items-center mb-24 feature-card">
+          <section ref={featureSectionRef} id="features" className="border-b-2 border-black bg-white px-6 py-20">
+            <div className="mx-auto max-w-6xl">
+              <div className="feature-card mb-24 grid items-center gap-12 md:grid-cols-2">
                 <div className="space-y-6">
                   <h2 className="text-5xl font-black tracking-tight">
                     Don't just look. <br /> Interact with it.
                   </h2>
-                  <p className="text-lg text-gray-600">
-                    Try it right now. This is a live visualization.
-                  </p>
+                  <p className="text-lg text-gray-600">Try it right now. This is a live visualization.</p>
                   <ul className="space-y-3">
-                    {[
-                      "Drag to pan",
-                      "Scroll to zoom",
-                      "Click nodes to visit",
-                    ].map((item, i) => (
+                    {['Drag to pan', 'Scroll to zoom', 'Click nodes to visit'].map((item, i) => (
                       <li key={i} className="flex items-center gap-3 font-bold">
-                        <div className="w-6 h-6 bg-green-400 border-2 border-black rounded-full flex items-center justify-center text-xs">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-black bg-green-400 text-xs">
                           ✓
                         </div>
                         {item}
@@ -356,40 +320,40 @@ export default function LandingPage() {
                     ))}
                   </ul>
                 </div>
-                <div className="relative group h-96">
-                  <div className="absolute inset-0 bg-black rounded-2xl transform translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform"></div>
-                  <div className="relative bg-white border-2 border-black rounded-2xl overflow-hidden w-full h-full shadow-inner">
+                <div className="group relative h-96">
+                  <div className="absolute inset-0 translate-x-2 translate-y-2 transform rounded-2xl bg-black transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
+                  <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-black bg-white shadow-inner">
                     <LandingGraph />
                   </div>
                 </div>
               </div>
 
               {/* Feature Grid */}
-              <div className="grid md:grid-cols-3 gap-6">
+              <div className="grid gap-6 md:grid-cols-3">
                 {[
                   {
-                    title: "Timeline View",
+                    title: 'Timeline View',
                     icon: Clock,
-                    desc: "See forks arranged by time.",
+                    desc: 'See forks arranged by time.',
                   },
                   {
-                    title: "Save & Share",
+                    title: 'Save & Share',
                     icon: Star,
-                    desc: "Logged in users can save up to 4 graphs.",
+                    desc: 'Logged in users can save up to 4 graphs.',
                   },
                   {
-                    title: "Daily Quotas",
+                    title: 'Daily Quotas',
                     icon: Zap,
-                    desc: "Smart rate limiting ensures fair usage.",
+                    desc: 'Smart rate limiting ensures fair usage.',
                   },
                 ].map((feature, i) => (
                   <div
                     key={i}
-                    className="feature-card bg-[#FDF4FF] p-6 border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
+                    className="feature-card rounded-xl border-2 border-black bg-[#FDF4FF] p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
                   >
-                    <feature.icon className="w-10 h-10 mb-4 text-purple-600" />
-                    <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                    <p className="text-gray-600 text-sm">{feature.desc}</p>
+                    <feature.icon className="mb-4 h-10 w-10 text-purple-600" />
+                    <h3 className="mb-2 text-xl font-bold">{feature.title}</h3>
+                    <p className="text-sm text-gray-600">{feature.desc}</p>
                   </div>
                 ))}
               </div>
@@ -403,7 +367,7 @@ export default function LandingPage() {
         </>
       )}
 
-      {view === "search" && <Footer />}
+      {view === 'search' && <Footer />}
     </main>
   );
 }
