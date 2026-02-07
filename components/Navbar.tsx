@@ -48,13 +48,13 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden md:flex gap-6 font-bold text-[16px] text-white/90">
-            <Link href="#features" className="hover:text-[#FACC15] hover:underline decoration-2 transition-colors">Features</Link>
-            <Link href="#pricing" className="hover:text-[#FACC15] hover:underline decoration-2 transition-colors">Pricing</Link>
+            <Link href="#features" className="hover:text-[#FACC15]  transition-colors">Features</Link>
+            <Link href="#pricing" className="hover:text-[#FACC15]  transition-colors">Pricing</Link>
           </div>
 
           <div className="flex items-center gap-4">
             <a 
-              href="https://github.com/yourusername/forklens" 
+              href="https://github.com/thedrogon/forklens" 
               target="_blank"
               className="hidden sm:flex items-center gap-2 bg-white text-black px-3 py-1.5 rounded-lg border-2 border-black shadow-[3px_3px_0px_0px_rgba(255,255,255,0.3)] hover:translate-y-0.5 hover:shadow-none transition-all text-xs font-bold"
             >

@@ -215,17 +215,20 @@ export default function LandingPage() {
   };
 
   return (
-    <main
-      ref={containerRef}
-      className="min-h-screen font-sans flex flex-col"
-    >
+    <main ref={containerRef} className="min-h-screen font-sans flex flex-col">
       <Navbar />
 
       {/* --- HERO SECTION: DEEP BLUEBERRY --- */}
       {view === "search" ? (
-        <div className="grow flex flex-col items-center justify-center min-h-[95vh] px-4 relative bg-[#1E1B4B] border-b-2 border-black">
+        <div className="grow flex flex-col items-center justify-center min-h-[95vh] px-4 relative bg-[#1E1B4B] border-b-2 border-black overflow-hidden">
           {/* Dot Pattern Overlay */}
-          <div className="absolute inset-0 opacity-14" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+          <div
+            className="absolute inset-0 opacity-14"
+            style={{
+              backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)",
+              backgroundSize: "30px 30px",
+            }}
+          ></div>
 
           <div
             ref={heroTextRef}
@@ -235,43 +238,50 @@ export default function LandingPage() {
             <div className="inline-block bg-[#FACC15] border-2 border-black px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-[4px_4px_0px_0px_white] transform -rotate-2 mb-6">
               ✨ New: Timeline View Added!
             </div>
-            
-            {/* Title - WHITE */}
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+
+            {/* Title - Responsive sizing */}
+            <h1 className="text-5xl md:text-6xl font-black tracking-tighter leading-[0.9] text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)]">
               STOP DIGGING <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#C084FC] to-[#F472B6]">
+              <span className="text-transparent md:text-8xl bg-clip-text bg-linear-to-r from-[#C084FC] to-[#F472B6]">
                 DEAD FORKS.
               </span>
             </h1>
-            
-            {/* Subtitle - Gray-300 */}
-            <p className="text-2xl text-gray-300 max-w-2xl mx-auto font-bold">
-              Visualize repository history. <span className="text-white underline decoration-wavy decoration-[#F472B6]">Free for open source.</span>
+
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto font-bold px-2">
+              Visualize repository history.{" "}
+              <span className="text-white underline decoration-wavy decoration-[#F472B6]">
+                Free for open source.
+              </span>
             </p>
 
-            {/* Input - White BG for Contrast */}
+            {/* Input Container - Always Row, No Stacking */}
             <div
               ref={heroInputRef}
-              className="bg-white p-2 rounded-xl shadow-[8px_8px_0px_0px_#C084FC] border-2 border-black flex gap-2 max-w-xl mx-auto transform hover:scale-[1.02] transition-transform duration-300 mt-8"
+              className="bg-white p-2 rounded-xl shadow-[8px_8px_0px_0px_#C084FC] border-2 border-black flex flex-row items-center gap-2 max-w-xl w-full mx-auto transform hover:scale-[1.02] transition-transform duration-300 mt-8"
             >
               <input
                 type="text"
                 placeholder="facebook/react"
-                className="flex-1 outline-none px-4 text-lg bg-transparent text-black font-bold placeholder:text-gray-400"
+                // KEY FIX 1: 'min-w-0' allows the input to shrink below its default size on tiny screens
+                className="flex-1 min-w-0 outline-none px-2 md:px-4 text-base md:text-lg bg-transparent text-black font-bold placeholder:text-gray-400"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
+
               <button
                 onClick={handleSearch}
                 disabled={loading}
-                className="bg-[#1E1B4B] text-white hover:bg-black font-black px-8 py-4 rounded-lg border-2 border-black transition-all active:translate-y-1 active:shadow-none"
+                // KEY FIX 2: Reduced padding (px-4) and text size (text-sm) on mobile.
+                // 'shrink-0' ensures the button doesn't get squashed.
+                className="bg-[#1E1B4B] text-white hover:bg-black font-black text-sm md:text-base shrink-0 px-4 py-3 md:px-8 md:py-4 rounded-lg border-2 border-black transition-all active:translate-y-1 active:shadow-none whitespace-nowrap"
               >
-                {loading ? "Scanning..." : "DIAGRAM"}
+                {loading ? "..." : "DIAGRAM"}
               </button>
             </div>
           </div>
-          
+
           <div className="absolute bottom-10 scroll-arrow animate-bounce">
             <ArrowRight className="rotate-90 w-8 h-8 text-white" />
           </div>
@@ -332,14 +342,18 @@ export default function LandingPage() {
                     Try it right now. This is a live visualization.
                   </p>
                   <ul className="space-y-3">
-                    {["Drag to pan", "Scroll to zoom", "Click nodes to visit"].map(
-                      (item, i) => (
-                        <li key={i} className="flex items-center gap-3 font-bold">
-                          <div className="w-6 h-6 bg-green-400 border-2 border-black rounded-full flex items-center justify-center text-xs">✓</div>
-                          {item}
-                        </li>
-                      ),
-                    )}
+                    {[
+                      "Drag to pan",
+                      "Scroll to zoom",
+                      "Click nodes to visit",
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 font-bold">
+                        <div className="w-6 h-6 bg-green-400 border-2 border-black rounded-full flex items-center justify-center text-xs">
+                          ✓
+                        </div>
+                        {item}
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="relative group h-96">
@@ -383,7 +397,7 @@ export default function LandingPage() {
           </section>
 
           {/* New Sections */}
-          <HowItWorks /> 
+          <HowItWorks />
           <SocialProof />
           <Pricing />
         </>
