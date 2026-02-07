@@ -117,9 +117,7 @@ export default function HowItWorks() {
 
                 <p className="mb-8 text-lg leading-relaxed font-medium text-black/80 md:text-xl">{step.desc}</p>
 
-                <button className="group flex items-center gap-2 border-b-2 border-black pb-1 font-bold transition-all hover:gap-4">
-                  See details <ArrowRight size={18} />
-                </button>
+                
               </div>
 
               {/* Image Side (The "Pair" Visual) */}

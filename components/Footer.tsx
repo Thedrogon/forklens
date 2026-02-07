@@ -72,7 +72,7 @@ export default function Footer() {
                     </a>
 
                     <a
-                      href="https://github.com/"
+                      href="https://github.com/thedrogon/forklens"
                       target="_blank"
                       className="border-b border-transparent text-black/70 transition-all hover:border-black hover:text-black"
                     >
@@ -105,7 +105,7 @@ export default function Footer() {
           {/* Socials (LinkedIn & GitHub) */}
           <div className="flex gap-3">
             <a
-              href="https://github.com/yourusername"
+              href="https://github.com/thedrogon"
               target="_blank"
               className="rounded-lg border-2 border-transparent bg-gray-100 p-2 text-gray-600 transition-all hover:border-black hover:bg-white hover:text-black"
               aria-label="GitHub"
@@ -113,7 +113,7 @@ export default function Footer() {
               <Github className="h-5 w-5" />
             </a>
             <a
-              href="https://linkedin.com/in/yourusername"
+              href="https://linkedin.com/in/sayanjit-mukherjee/"
               target="_blank"
               className="rounded-lg border-2 border-transparent bg-gray-100 p-2 text-gray-600 transition-all hover:border-black hover:bg-[#0077b5] hover:text-white"
               aria-label="LinkedIn"
