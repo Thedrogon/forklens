@@ -14,11 +14,11 @@
 
 ## **[ 🚀 LAUNCH LIVE APP ](https://your-deployment-link.com)**
 
-**[ Report Bug 🐛 ](https://github.com/yourusername/forklens/issues) • [ Request Feature ✨ ](https://github.com/yourusername/forklens/issues)**
+**[ Report Bug 🐛 ](https://github.com/thedrogon/forklens/issues) • [ Request Feature ✨ ](https://github.com/thedrogon/forklens/issues)**
 
 <br />
 
-![ForkLens Banner](https://via.placeholder.com/1200x600/1E1B4B/FFFFFF?text=INSERT+APP+SCREENSHOT+HERE)
+<img width="206" height="59" alt="Screenshot 2026-02-07 180616" src="https://github.com/user-attachments/assets/86a512a7-2953-4b17-88b2-d82d99333874" />
 
 </div>
 
