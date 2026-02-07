@@ -12,7 +12,7 @@
 <br />
 <br />
 
-## **[ 🚀 LAUNCH LIVE APP ](https://your-deployment-link.com)**
+## **[ 🚀 LAUNCH LIVE APP ](https://forklens.vercel.app/)**
 
 **[ Report Bug 🐛 ](https://github.com/thedrogon/forklens/issues) • [ Request Feature ✨ ](https://github.com/thedrogon/forklens/issues)**
 
