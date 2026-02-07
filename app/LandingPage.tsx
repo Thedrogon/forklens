@@ -224,7 +224,7 @@ export default function LandingPage() {
             {/* Title - Responsive sizing */}
             <h1 className="text-5xl leading-[0.9] font-black tracking-tighter text-white drop-shadow-[4px_4px_0px_rgba(0,0,0,1)] md:text-6xl">
               STOP DIGGING <br />
-              <span className="animate-gradient-x bg-linear-to-r from-[#C084FC] via-[#F472B6] to-[#C084FC] bg-clip-text font-black text-transparent md:text-8xl">
+              <span className="animate-gradient-x bg-linear-to-r from-[#C084FC] via-[#FACC15] to-[#C084FC] bg-clip-text font-black text-transparent md:text-8xl">
                 DEAD FORKS.
               </span>
             </h1>

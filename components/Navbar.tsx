@@ -6,7 +6,6 @@ import LoginModal from './LoginModal';
 import { useState, useEffect } from 'react';
 
 export default function Navbar() {
-  const { data: session } = useSession();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -67,27 +66,15 @@ export default function Navbar() {
               </div>
             </a>
 
-            {session ? (
-              <div className="flex items-center gap-3">
-                <Link href="/dashboard" className="font-bold text-white hover:text-[#FACC15] transition-colors">
-                  My Graphs
-                </Link>
-                <button 
-                  onClick={() => signOut()}
-                  className="bg-black text-white px-4 py-2 rounded-lg font-bold text-sm border border-white/20 hover:bg-gray-900 transition-colors"
-                >
-                  Sign Out
-                </button>
-              </div>
-            ) : (
+             
               <button 
                 onClick={() => setIsLoginOpen(true)}
-                className="flex items-center gap-2 bg-[#FACC15] text-black px-4 py-2 rounded-lg border-2 border-black font-bold text-sm shadow-[4px_4px_0px_0px_white] hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_white] active:translate-y-1 active:shadow-none transition-all"
+                className="flex items-center gap-2 bg-[#C084FC] text-black px-4 py-2 rounded-lg border-2 border-black font-bold text-sm shadow-[4px_4px_0px_0px_white] hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_white] active:translate-y-1 active:shadow-none transition-all"
               >
                 <LogIn className="w-4 h-4" />
                 Login
               </button>
-            )}
+            
           </div>
         </div>
       </nav>

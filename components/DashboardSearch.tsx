@@ -71,7 +71,7 @@ export default function DashboardSearch({ usageCount = 0 }: { usageCount?: numbe
           className={`px-8 py-4 rounded-lg font-black text-white border-2 border-black transition-all flex items-center justify-center gap-2 ${
             isLocked 
               ? 'bg-gray-400 cursor-not-allowed shadow-none' 
-              : 'bg-[#C084FC] text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none'
+              : 'bg-[#a95af8] text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none'
           }`}
         >
           {loading ? <Loader2 className="animate-spin" size={24} /> : (isLocked ? <Lock size={24}/> : "DIAGRAM")}
