@@ -2,7 +2,7 @@
 import { pgTable, text, timestamp, integer, uuid, boolean, jsonb } from 'drizzle-orm/pg-core';
 
 // --- Auth Tables (Standard NextAuth) ---
-export const users = pgTable("user", {
+export const users = pgTable("users", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
   email: text("email").notNull(),

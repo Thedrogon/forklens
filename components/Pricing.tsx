@@ -101,7 +101,7 @@ export default function Pricing() {
 
             {/* White Button with Yellow Shadow */}
             <button className="w-full py-4 rounded-xl border-2 border-black font-black bg-white text-black hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_#FACC15] active:translate-y-1 active:shadow-none hover:translate-y-0.5">
-              Join Waitlist
+              Coming Soon...
             </button>
           </div>
 
